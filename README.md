@@ -1,6 +1,6 @@
 # esm-archive
 
-Bundles multiple files into a single binary blob.
+A tiny library for bundling multiple files into a single binary blob.
 
 ```js
 import { Archive, bundle } from "esm-archive";
