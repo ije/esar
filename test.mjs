@@ -1,4 +1,3 @@
-import { writeFileSync } from "fs";
 import { Archive, bundle } from "./index.mjs";
 
 const lastModified = 1708915929964;
@@ -25,15 +24,3 @@ if (await archive.openFile("bar.txt").text() !== await file1.text()) throw new E
 
 console.log("ok");
 console.log("chekcsum", archive.checksum);
-
-const buffer = await bundle([
-  new File(['export const foo = "bar";'], "/foo.js", {
-    type: "application/javascript",
-    lastModified,
-  }),
-]);
-const gz = await (new Response(new Blob([buffer]).stream().pipeThrough(new CompressionStream("gzip")))).arrayBuffer();
-writeFileSync(
-  "../../server/embed/esm-archive.gz",
-  new Uint8Array(gz),
-);
