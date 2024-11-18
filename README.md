@@ -1,9 +1,11 @@
-# esm-archive
+# esar
 
 A tiny library for bundling multiple files into a single binary blob.
 
 ```js
-import { Archive, bundle } from "esm-archive";
+import { Archive, bundle } from "esar";
+// or import from esm.sh in browser
+// import { Archive, bundle } from "https://esm.sh/esar";
 
 // bundle some files
 const data = bundle([
@@ -29,7 +31,7 @@ This library does not compress the archived files. Below is an example of how to
 with `gzip` algorithm, and use `DecompressionStream` to decompress the data again.
 
 ```js
-import { Archive, bundle } from "esm-archive";
+import { Archive, bundle } from "esar";
 
 const data = bundle([/* add some files */]);
 

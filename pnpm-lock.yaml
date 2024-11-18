@@ -9,7 +9,7 @@ importers:
   .:
     dependencies:
       xxhash-wasm:
-        specifier: ^1.0.2
+        specifier: 1.0.2
         version: 1.0.2
 
 packages:
