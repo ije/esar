@@ -1,24 +1,21 @@
-import xxhash from "xxhash-wasm";
-
-const xxhashPromise = xxhash();
-
 export async function bundle(entries) {
+  const { default: xxhash } = await import("xxhash-wasm");
+  const h32 = (await xxhash()).create32();
   const encoder = new TextEncoder();
   const encode = (str) => encoder.encode(str);
-  const length = 18 +
-    Array.from(entries).reduce(
+  const length = 12
+    + Array.from(entries).reduce(
       (acc, { name, type, size }) => acc + 11 + encode(name).length + encode(type).length + size,
       0,
     );
   const u8Array = (init) => new Uint8Array(init);
   const buffer = u8Array(length);
-  const h32 = (await xxhashPromise).create32();
   const dv = new DataView(new ArrayBuffer(8));
   const setUint32 = (i, n) => dv.setUint32(i, n);
   setUint32(0, length);
-  buffer.set(encode("ESMARCHIVE"));
-  buffer.set(u8Array(dv.buffer), 10);
-  let offset = 18;
+  buffer.set(encode("ESAR"));
+  buffer.set(u8Array(dv.buffer), 4);
+  let offset = 12;
   for (const entry of entries) {
     const name = encode(entry.name);
     const type = encode(entry.type);
@@ -46,7 +43,7 @@ export async function bundle(entries) {
     }
   }
   setUint32(0, h32.digest());
-  buffer.set(u8Array(dv.buffer.slice(0, 4)), 14);
+  buffer.set(u8Array(dv.buffer.slice(0, 4)), 8);
   return buffer;
 }
 
@@ -68,15 +65,15 @@ export class Archive {
     const decoder = new TextDecoder();
     const readUint32 = (offset) => dv.getUint32(offset);
     const readString = (offset, length) => decoder.decode(new Uint8Array(this._buf, offset, length));
-    if (this._buf.byteLength < 18 || readString(0, 10) !== "ESMARCHIVE") {
+    if (this._buf.byteLength < 12 || readString(0, 4) !== "ESAR") {
       throw Archive.invalidFormat;
     }
-    const length = readUint32(10);
+    const length = readUint32(4);
     if (length !== this._buf.byteLength) {
       throw Archive.invalidFormat;
     }
-    this._checksum = readUint32(14);
-    let offset = 18;
+    this._checksum = readUint32(8);
+    let offset = 12;
     while (offset < dv.byteLength) {
       const nameLen = dv.getUint16(offset);
       offset += 2;
