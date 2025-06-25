@@ -96,7 +96,7 @@ export class Archive {
     return this._checksum;
   }
 
-  get entries() {
+  entries() {
     return Object.values(this._entries).map(({ offset, ...rest }) => rest);
   }
 
@@ -104,7 +104,7 @@ export class Archive {
     return name in this._entries;
   }
 
-  openFile(name) {
+  file(name) {
     const info = this._entries[name];
     return info ? new File([this._buf.slice(info.offset, info.offset + info.size)], info.name, info) : null;
   }

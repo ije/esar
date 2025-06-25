@@ -16,13 +16,16 @@ const data = bundle([
 // read the archive
 const archive = new Archive(data);
 archive.checksum; // a 32-bit checksum of the archive
-archive.entries.length; // => 2
-archive.entries[0].name; // => "foo.txt"
-archive.entries[0].type; // => "text/plain"
-archive.entries[1].name; // => "bar.txt"
-archive.entries[1].type; // => "text/plain"
-archive.openFile("foo.txt"); // => File(["bar"], "foo.txt", { type: "text/plain" })
-archive.openFile("bar.txt"); // => File(["foo"], "bar.txt", { type: "text/plain" })
+
+const entries = archive.entries()
+entries.length; // => 2
+entries[0].name; // => "foo.txt"
+entries[0].type; // => "text/plain"
+entries[1].name; // => "bar.txt"
+entries[1].type; // => "text/plain"
+
+archive.file("foo.txt"); // => File(["bar"], "foo.txt", { type: "text/plain" })
+archive.file("bar.txt"); // => File(["foo"], "bar.txt", { type: "text/plain" })
 ```
 
 ## Compression
